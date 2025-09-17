@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PE Sections (NSA) – Paste Text</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; color: #222; }
+  h1 { font-size: 18px; margin-bottom: 10px; }
+  h2 { font-size: 16px; margin-top: 24px; margin-bottom: 8px; }
+  .controls { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  textarea { width: 100%; height: 200px; font-family: Consolas, monospace; font-size: 12px; padding: 8px; }
+  .hint { color: #666; font-size: 12px; margin-top: 6px; }
+  .card { border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 12px; }
+  ul { margin: 8px 0 16px 20px; line-height: 1.5; }
+  li { margin-bottom: 8px; }
+  .none { color: #888; font-style: italic; }
+  .pill { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 6px; border: 1px solid #ddd; background: #f7f7f7; }
+  .error { color: #a40000; background: #ffe5e5; padding: 8px; border: 1px solid #ffb3b3; border-radius: 4px; margin: 8px 0; }
+  button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #f8f8f8; cursor: pointer; }
+  button:hover { background: #f0f0f0; }
+  .row { margin-top: 6px; }
+</style>
+</head>
+<body>
+  <h1>PE Sections (NSA) – IOT & VVM (Paste Text)</h1>
+
+  <div class="hint">
+    Paste your data from Excel or CSV here. The <b>first row must be headers</b>.<br/>
+    Expected headers: <code>Domain</code>, <code>RIL Circle</code>, <code>Brief Description</code>, and an NSA column
+    (<code>RAN Mode</code> / <code>Mode</code> / <code>RIL Service Affecting</code> / <code>Q</code>).
+  </div>
+<button onclick="window.open('5G%20CR%20BP.html','_blank')">Open 5G CR BP</button>
+
+  <textarea id="txt" placeholder="Example:
+Domain\tRIL Circle\tBrief Description\tQ
+IOT Core\tMH\tSome IOT activity\tNSA
+IMS\tGJ\tIMS pe description\tNSA
+Transport\tMH\tNon-matching row\tSA
+BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
+
+  <div class="controls">
+    <button id="parseBtn">Parse</button>
+    <button id="clearBtn">Clear</button>
+    <button id="copyIOT">Copy IOT bullets</button>
+    <button id="copyVVM">Copy VVM bullets</button>
+    <button id="copyCRBP">Copy ALL CR BP bullets</button>
+  </div>
+
+  <div id="msg"></div>
+  <div id="summary" class="row"></div>
+
+  <div class="card">
+    <h2>IOT Domain Core PEs (NSA): -</h2>
+    <ul id="iotList"></ul>
+  </div>
+
+  <div class="card">
+    <h2>VVM Domain Core PEs (NSA): -</h2>
+    <ul id="vvmList"></ul>
+  </div>
+
+  <div class="card">
+    <h2>ALL CR BP</h2>
+    <ul id="crbpList"></ul>
+  </div>
+
+<script>
+  // ===== Configuration =====
+  // Header aliases (case-insensitive matches supported)
+  const HDR_DOMAIN = ['Domain'];                                // D column (by name)
+  const HDR_CIRCLE = ['RIL Circle', 'Circle', 'RILCircle'];     // I column (by name)
+  const HDR_DESC   = ['Brief Description', 'Description', 'Brief_Description']; // N column (by name)
+
+  // NSA column candidates (Q or other). To restrict ONLY to Q: const NSA_COLUMNS = ['Q'];
+  const NSA_COLUMNS = ['RAN Mode', 'Mode', 'RIL Service Affecting', 'Q', 'Service Mode', 'SA/NSA', 'RANMode'];
+
+  // Domain tokens
+  const TOK_IOT = ['IOT Core'];
+  const TOK_VVM = ['BREAKOUT', 'IMS', 'SMS'];
+
+  // --- ALL CR BP behavior ---
+  // By default, we include ALL rows (no filter).
+  // If you want only rows where certain columns contain tokens, set:
+  //   const CRBP_TOKENS = ['CR','BP'];  // example tokens
+  //   const CRBP_FILTER_COLUMNS = ['Category', 'Reason / Type of PE']; // columns to scan
+  // Default: include everything (no tokens)
+  const CRBP_TOKENS = []; // [] or null => no filtering (include all rows)
+  const CRBP_FILTER_COLUMNS = ['Category', 'Reason / Type of PE']; // used only if CRBP_TOKENS has values
+
+  // ===== Helpers =====
+  const norm = v => (v ?? '').toString().trim();
+  const toLower = v => norm(v).toLowerCase();
+
+  function detectDelimiter(line) {
+    const candidates = [
+      { d: '\t', c: (line.match(/\t/g) || []).length },
+      { d: ',',  c: (line.match(/,/g)  || []).length },
+      { d: ';',  c: (line.match(/;/g)  || []).length },
+      { d: '|',  c: (line.match(/\|/g) || []).length }
+    ];
+    candidates.sort((a,b) => b.c - a.c);
+    return candidates[0].c > 0 ? candidates[0].d : ','; // default to comma
+  }
+
+  function splitRow(line, delim) {
+    return line.split(delim).map(s => s.replace(/^\uFEFF/, '').trim());
+  }
+
+  function getCell(rowObj, aliases) {
+    for (const key of aliases) {
+      if (rowObj.hasOwnProperty(key)) return rowObj[key];
+      const matchKey = Object.keys(rowObj).find(k => toLower(k) === toLower(key));
+      if (matchKey) return rowObj[matchKey];
+    }
+    return '';
+  }
+
+  function getNSAValue(rowObj) {
+    for (const c of NSA_COLUMNS) {
+      if (rowObj.hasOwnProperty(c)) return norm(rowObj[c]);
+      const matchKey = Object.keys(rowObj).find(k => toLower(k) === toLower(c));
+      if (matchKey) return norm(rowObj[matchKey]);
+    }
+    return '';
+  }
+
+  function containsAny(hay, tokens) {
+    const s = toLower(hay);
+    return tokens.some(tok => s.includes(tok.toLowerCase()));
+  }
+
+  function bulletText(circle, tag, desc) {
+    const c = norm(circle);
+    const t = norm(tag);
+    const d = norm(desc);
+    return `${c}${c && (t || d) ? ', ' : ''}${t}${(t && d) ? ', ' : (!t && c && d) ? ', ' : ''}${d}`;
+  }
+
+  function showError(html) {
+    const msg = document.getElementById('msg');
+    msg.innerHTML = `<div class="error">${html}</div>`;
+  }
+
+  function clearError() {
+    document.getElementById('msg').innerHTML = '';
+  }
+
+  function renderUL(ul, items) {
+    ul.innerHTML = '';
+    if (!items.length) {
+      const li = document.createElement('li');
+      li.className = 'none';
+      li.textContent = 'None';
+      ul.appendChild(li);
+      return;
+    }
+    items.forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+  }
+
+  function copyBullets(ulId) {
+    const ul = document.getElementById(ulId);
+    const bullets = Array.from(ul.querySelectorAll('li'))
+      .map(li => li.textContent)
+      .filter(x => x && x !== 'None')
+      .join('\n');
+    if (!bullets) return;
+    navigator.clipboard.writeText(bullets);
+  }
+
+  // ===== Main parse handler =====
+  document.getElementById('parseBtn').addEventListener('click', () => {
+    clearError();
+    const text = document.getElementById('txt').value || '';
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) {
+      showError('Please paste at least a header row and one data row.');
+      return;
+    }
+
+    const headerLine = lines[0];
+    const delim = detectDelimiter(headerLine);
+    const headers = splitRow(headerLine, delim);
+
+    // Build row objects
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = splitRow(lines[i], delim);
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = cols[idx] ?? ''; });
+      rows.push(obj);
+    }
+
+    // Validate essential headers exist
+    const headersLower = headers.map(h => toLower(h));
+    const missing = [];
+    if (!headersLower.includes('domain')) missing.push('Domain');
+    if (!headersLower.includes('ril circle') && !headersLower.includes('circle') && !headersLower.includes('rilcircle')) missing.push('RIL Circle');
+    if (!headersLower.includes('brief description') && !headersLower.includes('description') && !headersLower.includes('brief_description')) missing.push('Brief Description');
+
+    const hasNSAHeader = NSA_COLUMNS.some(n => headersLower.includes(toLower(n)));
+
+    if (missing.length) {
+      showError('Missing expected header(s): <b>' + missing.join(', ') + '</b>. Make sure your first row is headers.');
+      return;
+    }
+    if (!hasNSAHeader) {
+      showError('Warning: No NSA column detected (looked for: ' + NSA_COLUMNS.join(', ') + '). Rows will not match NSA unless one of these columns exists and contains "NSA".');
+    }
+
+    // Filter rows into sections
+    const iotItems  = [];
+    const vvmItems  = [];
+    const crbpItems = [];
+
+    rows.forEach(r => {
+      const domain = getCell(r, HDR_DOMAIN);
+      const circle = getCell(r, HDR_CIRCLE);
+      const desc   = getCell(r, HDR_DESC);
+      const nsa    = getNSAValue(r);
+
+      const isNSA = toLower(nsa) === 'nsa';
+
+      // IOT: Domain contains 'IOT Core' AND NSA
+      if (isNSA && containsAny(domain, TOK_IOT)) {
+        iotItems.push(bulletText(circle, 'HSI', desc));
+      }
+
+      // VVM: Domain contains any of BREAKOUT/IMS/SMS AND NSA
+      if (isNSA && containsAny(domain, TOK_VVM)) {
+        vvmItems.push(bulletText(circle, 'VVM', desc));
+      }
+
+      // ALL CR BP: by default include ALL rows -> "RIL Circle, Brief Description"
+      let includeCRBP = true;
+      if (CRBP_TOKENS && CRBP_TOKENS.length) {
+        const hay = (CRBP_FILTER_COLUMNS || [])
+          .map(col => getCell(r, [col]))
+          .join(' ');
+        includeCRBP = containsAny(hay, CRBP_TOKENS);
+      }
+      if (includeCRBP) {
+        crbpItems.push(bulletText(circle, '', desc)); // "Circle, Desc"
+      }
+    });
+
+    renderUL(document.getElementById('iotList'),  iotItems);
+    renderUL(document.getElementById('vvmList'),  vvmItems);
+    renderUL(document.getElementById('crbpList'), crbpItems);
+
+    document.getElementById('summary').innerHTML =
+      `<span class="pill">IOT NSA: <b>${iotItems.length}</b></span>` +
+      `<span class="pill">VVM NSA: <b>${vvmItems.length}</b></span>` +
+      `<span class="pill">ALL CR BP: <b>${crbpItems.length}</b></span>`;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('txt').value = '';
+    document.getElementById('iotList').innerHTML = '';
+    document.getElementById('vvmList').innerHTML = '';
+    document.getElementById('crbpList').innerHTML = '';
+    document.getElementById('summary').innerHTML = '';
+    clearError();
+  });
+
+  document.getElementById('copyIOT').addEventListener('click', () => copyBullets('iotList'));
+  document.getElementById('copyVVM').addEventListener('click', () => copyBullets('vvmList'));
+  document.getElementById('copyCRBP').addEventListener('click', () => copyBullets('crbpList'));
+</script>
+</body>
+</html>

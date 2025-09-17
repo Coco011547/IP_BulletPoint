@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>5G CR BP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; color: #222; }
+  h1 { font-size: 18px; margin-bottom: 10px; }
+  h2 { font-size: 16px; margin-top: 24px; margin-bottom: 8px; }
+  h3 { font-size: 14px; margin: 14px 0 6px; }
+  .controls { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  textarea { width: 100%; height: 240px; font-family: Consolas, monospace; font-size: 12px; padding: 8px; }
+  .hint { color: #666; font-size: 12px; margin-top: 6px; }
+  .error { color: #a40000; background: #ffe5e5; padding: 8px; border: 1px solid #ffb3b3; border-radius: 4px; margin: 8px 0; }
+  .card { border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 12px; }
+  ul { margin: 8px 0 16px 20px; line-height: 1.5; }
+  li { margin-bottom: 8px; }
+  .none { color: #888; font-style: italic; }
+  .pill { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 6px; border: 1px solid #ddd; background: #f7f7f7; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  th, td { border: 1px solid #eee; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #fafafa; }
+  button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #f8f8f8; cursor: pointer; }
+  button:hover { background: #f0f0f0; }
+  label { display: inline-flex; align-items: center; gap: 6px; }
+  .subCard { border: 1px dashed #ddd; padding: 8px; border-radius: 6px; margin-top: 8px; }
+  .subHead { display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+  <h1>5G CR BP</h1>
+
+  <div class="hint">
+    Paste your data from Excel/CSV. The <b>first row must be headers</b> (close to):<br>
+    <code>Sr No</code>, <code>Reason / Type of PE</code>, <code>Domain</code>, <code>PE Number</code>, <code>RIL Circle</code>, <code>Activity Node</code>, <code>Brief Description</code>, <code>RIL Service Affecting</code>.
+  </div>
+
+  <textarea id="txt" placeholder="Example:
+Sr No\tReason / Type of PE\tDomain\tPE Number\tRIL Circle\tActivity Node\tBrief Description\tRIL Service Affecting
+1\tSW Upgrade\t5G\tPE-5678\tGJ\tSMF\tSoftware upgrade window\tNSA
+2\tGo-Live\t5G\tPE-1234\tMH\tAMF\tCutover activity\tNSA
+3\tConfiguration\t5G\tPE-7890\tDL\tUPF\tPolicy configuration\tNSA
+4\tFault Rectification\t5G\tPE-1111\tMH\tUPF\tHW swap\tNSA
+5\tFault Rectification\t5G\tPE-2222\tGJ\tSMF-BNG\tAccess-side fix\tNSA
+6\tCR BP\t5G\tPE-3333\tMH\tSMF , SMF BNG\tGeneral item\tNSA"></textarea>
+
+  <div class="controls">
+    <button id="parseBtn">Parse</button>
+    <button id="clearBtn">Clear</button>
+    <button id="copyBullets">Copy main bullets</button>
+    <label><input type="checkbox" id="filterSA" /> Only where <b>RIL Service Affecting</b> = <i>Yes</i> or <i>NSA</i> (for main bullets)</label>
+    <!-- NEW: Download ALL button -->
+    <button id="downloadAll">Download ALL (txt)</button>
+  </div>
+
+  <div id="msg"></div>
+  <div id="summary"></div>
+
+  <div class="card">
+    <h2>Bullets (RIL Circle, Brief Description)</h2>
+    <ul id="bulletList"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Table</h2>
+    <div id="tableWrap"></div>
+  </div>
+
+  <!-- 5G Mobility Core PEs: - (NSA) with categorized sub-sections -->
+  <div class="card">
+    <h2>5G Mobility Core PEs: - (NSA)</h2>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Upgrades Activities:</h3>
+        <span id="countUpg" class="pill"></span>
+        <button id="copyUpg">Copy</button>
+      </div>
+      <ul id="mobUpgrades"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Go live Activities:</h3>
+        <span id="countGoLive" class="pill"></span>
+        <button id="copyGoLive">Copy</button>
+      </div>
+      <ul id="mobGoLive"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Configuration/ InfoSec Activities: -</h3>
+        <span id="countConfig" class="pill"></span>
+        <button id="copyConfig">Copy</button>
+      </div>
+      <ul id="mobConfig"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Troubleshooting/ HW Activities:-</h3>
+        <span id="countTrouble" class="pill"></span>
+        <button id="copyTrouble">Copy</button>
+      </div>
+      <ul id="mobTroubleshoot"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">5G Jio Airfiber (Sub6) Core PEs: - (NSA)</h3>
+        <span id="countAirfiber" class="pill"></span>
+        <button id="copyAirfiber">Copy</button>
+      </div>
+      <div class="hint">Includes Activity Node variants like <code>SMF-BNG</code>, <code>SMF , SMF BNG</code>, <code>SMF BNG</code>, <code>SMF / BNG</code> etc.</div>
+      <ul id="mobAirfiber"></ul>
+    </div>
+  </div>
+
+<script>
+  // ===== Header aliases (case-insensitive matching) =====
+  const HDR_SRNO   = ['Sr No', 'Sr. No', 'SrNo'];      // A
+  const HDR_REASON = ['Reason / Type of PE', 'Reason', 'Type of PE', 'Reason/Type of PE']; // B
+  const HDR_DOMAIN = ['Domain'];                        // C
+  const HDR_PE     = ['PE Number', 'PENumber', 'PE'];  // D
+  const HDR_CIRCLE = ['RIL Circle', 'Circle', 'RILCircle']; // E
+  const HDR_NODE   = ['Activity Node', 'Node', 'ActivityNode']; // F
+  const HDR_DESC   = ['Brief Description', 'Description', 'Brief_Description']; // G
+  const HDR_SA     = ['RIL Service Affecting', 'Service Affecting', 'ServiceAffecting']; // H
+
+  const EXPECTED = [HDR_SRNO, HDR_REASON, HDR_DOMAIN, HDR_PE, HDR_CIRCLE, HDR_NODE, HDR_DESC, HDR_SA];
+
+  // ===== Helpers =====
+  const norm    = v => (v ?? '').toString().trim();
+  const toLower = v => norm(v).toLowerCase();
+
+  function detectDelimiter(line) {
+    const candidates = [
+      { d: '\t', c: (line.match(/\t/g) || []).length },
+      { d: ',',  c: (line.match(/,/g)  || []).length },
+      { d: ';',  c: (line.match(/;/g)  || []).length },
+      { d: '|',  c: (line.match(/\|/g) || []).length }
+    ];
+    candidates.sort((a,b) => b.c - a.c);
+    return candidates[0].c > 0 ? candidates[0].d : ','; // default to comma
+  }
+
+  function splitRow(line, delim) {
+    // Simple split for TSV/CSV; for complex quotes, integrate PapaParse if needed
+    return line.split(delim).map(s => s.replace(/^\uFEFF/, '').trim());
+  }
+
+  function getCell(row, aliases) {
+    for (const key of aliases) {
+      if (row.hasOwnProperty(key)) return row[key];
+      const found = Object.keys(row).find(k => toLower(k) === toLower(key));
+      if (found) return row[found];
+    }
+    return '';
+  }
+
+  function renderError(html) { document.getElementById('msg').innerHTML = '<div class="error">' + html + '</div>'; }
+  function clearError() { document.getElementById('msg').innerHTML = ''; }
+
+  function buildTable(rows, headersOrdered) {
+    const wrap = document.getElementById('tableWrap');
+    wrap.innerHTML = '';
+    if (!rows.length) { wrap.innerHTML = '<div class="none">No rows</div>'; return; }
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const trh = document.createElement('tr');
+    headersOrdered.forEach(h => {
+      const th = document.createElement('th');
+      th.textContent = h[0]; // primary label
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      headersOrdered.forEach(hAliases => {
+        const td = document.createElement('td');
+        td.textContent = getCell(r, hAliases);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+  }
+
+  // Main bullets (unchanged): "RIL Circle, Brief Description"
+  function bullet(circle, desc) {
+    const c = norm(circle), d = norm(desc);
+    return `${c}${c && d ? ', ' : ''}${d}`;
+  }
+
+  // EXACT required Mobility format:
+  // <RIL Circle> , HSI <RIL Service Affecting>  PE- <Brief Description>
+  function bulletMobility(circle, sa, briefDesc) {
+    const c = (circle ?? '').toString().trim();
+    const s = (sa ?? '').toString().trim();
+    const d = (briefDesc ?? '').toString().trim();
+    const left  = c ? `${c} , ` : ' , ';
+    const mid   = `HSI ${s}`;
+    const right = `  PE- ${d}`;
+    return `${left}${mid}${right}`.trim();
+  }
+
+  // Helper: robust check for SMF-BNG variants in Activity Node
+  function isSMFBNG(node) {
+    const s = (node ?? '').toString().trim().toLowerCase();
+    if (!s) return false;
+    if (s.includes('smf-bng')) return true;
+    if (s.includes('smf , smf bng')) return true;
+    if (s.includes('smf bng')) return true;
+    if (/smf[^a-z0-9]+bng/.test(s)) return true; // e.g., "SMF / BNG", "SMF_BNG", "SMF - BNG"
+    return false;
+  }
+
+  // Utility: render list with NA if empty, update count pill
+  function renderListWithNA(ulId, countId, items) {
+    const ul = document.getElementById(ulId);
+    const pill = document.getElementById(countId);
+    ul.innerHTML = '';
+    if (!items.length) {
+      const li = document.createElement('li'); li.className = 'none'; li.textContent = 'NA'; ul.appendChild(li);
+    } else {
+      items.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+    }
+    pill.textContent = `Count: ${items.length}`;
+  }
+
+  function renderMainBullets(rows, filterSA) {
+    const ul = document.getElementById('bulletList');
+    ul.innerHTML = '';
+    const items = [];
+
+    rows.forEach(r => {
+      const circle = getCell(r, HDR_CIRCLE);
+      const desc   = getCell(r, HDR_DESC);
+      const sa     = toLower(getCell(r, HDR_SA));
+      const isSAorNSA = ['yes','y','true','1','nsa'].includes(sa); // optional toggle
+
+      if (filterSA && !isSAorNSA) return;
+      items.push(bullet(circle, desc));
+    });
+
+    if (!items.length) {
+      const li = document.createElement('li'); li.className = 'none'; li.textContent = 'None'; ul.appendChild(li);
+    } else {
+      items.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+    }
+
+    document.getElementById('summary').innerHTML =
+      `<span class="pill">Rows: <b>${rows.length}</b></span>` +
+      `<span class="pill">Main bullets: <b>${items.length}</b></span>`;
+  }
+
+  // Mobility categorized sections (NSA-only) with Mobility bullet format
+  function renderMobilitySections(rows) {
+    const nsaRows = rows.filter(r => toLower(getCell(r, HDR_SA)) === 'nsa');
+
+    const upgrades = [];
+    const goLive = [];
+    const config = [];
+    const trouble = [];
+    const airfiber = [];
+
+    nsaRows.forEach(r => {
+      const reasonL = toLower(getCell(r, HDR_REASON));
+      const circle  = getCell(r, HDR_CIRCLE); // E
+      const brief   = getCell(r, HDR_DESC);   // G
+      const saVal   = getCell(r, HDR_SA);     // H
+      const node    = getCell(r, HDR_NODE);   // F
+      const nodeL   = toLower(node);
+
+      const hasSMF = nodeL.includes('smf');
+      const hasBNG = nodeL.includes('bng');
+      const hasSMFBNGBroad = isSMFBNG(node);
+
+      // 1) Upgrades Activities: Reason contains "SW Upgrade"
+      if (reasonL.includes('sw upgrade')) {
+        upgrades.push(bulletMobility(circle, saVal, brief));
+      }
+
+      // 2) Go live Activities: Reason contains "Go-Live" or "Go live"
+      if (reasonL.includes('go-live') || reasonL.includes('go live')) {
+        goLive.push(bulletMobility(circle, saVal, brief));
+      }
+
+      // 3) Configuration/ InfoSec: Reason contains "Configuration" AND Activity Node NOT contains "SMF" AND "BNG"
+      if (reasonL.includes('configuration') && !hasSMF && !hasBNG) {
+        config.push(bulletMobility(circle, saVal, brief));
+      }
+
+      // 4) Troubleshooting/ HW: Reason contains "Fault Rectification" AND Activity Node NOT contains "SMF" AND "BNG"
+      if (reasonL.includes('fault rectification') && !hasSMF && !hasBNG) {
+        trouble.push(bulletMobility(circle, saVal, brief));
+      }
+
+      // 5) 5G Jio Airfiber (Sub6): Activity Node contains SMF-BNG variants
+      if (hasSMFBNGBroad) {
+        airfiber.push(bulletMobility(circle, saVal, brief));
+      }
+    });
+
+    renderListWithNA('mobUpgrades',     'countUpg',     upgrades);
+    renderListWithNA('mobGoLive',       'countGoLive',  goLive);
+    renderListWithNA('mobConfig',       'countConfig',  config);
+    renderListWithNA('mobTroubleshoot', 'countTrouble', trouble);
+    renderListWithNA('mobAirfiber',     'countAirfiber',airfiber);
+  }
+
+  function copyBulletsFrom(ulId) {
+    const ul = document.getElementById(ulId);
+    const bullets = Array.from(ul.querySelectorAll('li'))
+      .map(li => li.textContent)
+      .filter(x => x && x !== 'None' && x !== 'NA')
+      .join('\n');
+    if (bullets) navigator.clipboard.writeText(bullets);
+  }
+
+  // === NEW: Build a combined text across all sections and download as .txt ===
+  function getBulletsArray(ulId) {
+    return Array.from(document.querySelectorAll(`#${ulId} li`))
+      .map(li => li.textContent)
+      .filter(t => t && t !== 'None' && t !== 'NA');
+  }
+
+  function sectionBlock(title, ulId) {
+    const items = getBulletsArray(ulId);
+    const body = items.length ? '• ' + items.join('\n• ') : 'NA';
+    return `${title}\n${body}\n`;
+  }
+
+  function downloadAllTxt() {
+    const blocks = [];
+
+    // Main bullets
+    blocks.push(sectionBlock('Main Bullets (RIL Circle, Brief Description)', 'bulletList'));
+
+    // Mobility groups
+    blocks.push('5G Mobility Core PEs: - (NSA)');
+    blocks.push(sectionBlock('Upgrades Activities:', 'mobUpgrades'));
+    blocks.push(sectionBlock('Go live Activities:', 'mobGoLive'));
+    blocks.push(sectionBlock('Configuration/ InfoSec Activities: -', 'mobConfig'));
+    blocks.push(sectionBlock('Troubleshooting/ HW Activities:-', 'mobTroubleshoot'));
+    blocks.push(sectionBlock('5G Jio Airfiber (Sub6) Core PEs: - (NSA)', 'mobAirfiber'));
+
+    const content = blocks.join('\n');
+
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const ts = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `5G_CR_BP_All_${ts}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ===== Events =====
+  document.getElementById('parseBtn').addEventListener('click', () => {
+    clearError();
+    const text = document.getElementById('txt').value || '';
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) { renderError('Please paste at least a header row and one data row.'); return; }
+
+    const headerLine = lines[0];
+    const delim = detectDelimiter(headerLine);
+    const headers = splitRow(headerLine, delim);
+
+    // Build row objects using headers
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = splitRow(lines[i], delim);
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = cols[idx] ?? ''; });
+      rows.push(obj);
+    }
+
+    // Check essential headers exist (loosely, via alias match)
+    const missing = [];
+    [HDR_SRNO, HDR_REASON, HDR_DOMAIN, HDR_PE, HDR_CIRCLE, HDR_NODE, HDR_DESC, HDR_SA].forEach(aliasGroup => {
+      const anyPresent = headers.some(h => aliasGroup.some(a => toLower(h) === toLower(a)));
+      if (!anyPresent) missing.push(aliasGroup[0]);
+    });
+    if (missing.length) { renderError('Missing expected header(s): <b>' + missing.join(', ') + '</b>.'); return; }
+
+    // Render
+    const filterSA = document.getElementById('filterSA').checked;
+    renderMainBullets(rows, filterSA);
+    buildTable(rows, [HDR_SRNO, HDR_REASON, HDR_DOMAIN, HDR_PE, HDR_CIRCLE, HDR_NODE, HDR_DESC, HDR_SA]);
+    renderMobilitySections(rows);
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('txt').value = '';
+    ['bulletList','tableWrap','summary','msg','mobUpgrades','mobGoLive','mobConfig','mobTroubleshoot','mobAirfiber'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    });
+    ['countUpg','countGoLive','countConfig','countTrouble','countAirfiber'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '';
+    });
+  });
+
+  document.getElementById('copyBullets').addEventListener('click', () => copyBulletsFrom('bulletList'));
+  document.getElementById('copyUpg').addEventListener('click',     () => copyBulletsFrom('mobUpgrades'));
+  document.getElementById('copyGoLive').addEventListener('click',  () => copyBulletsFrom('mobGoLive'));
+  document.getElementById('copyConfig').addEventListener('click',  () => copyBulletsFrom('mobConfig'));
+  document.getElementById('copyTrouble').addEventListener('click', () => copyBulletsFrom('mobTroubleshoot'));
+  document.getElementById('copyAirfiber').addEventListener('click',() => copyBulletsFrom('mobAirfiber'));
+
+  // NEW: hook up Download ALL
+  document.getElementById('downloadAll').addEventListener('click', downloadAllTxt);
+
+  document.getElementById('filterSA').addEventListener('change', () => {
+    // Re-parse to apply main-bullets filter toggle
+    document.getElementById('parseBtn').click();
+  });
+</script>
+</body>
+</html>
