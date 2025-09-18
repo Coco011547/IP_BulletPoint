@@ -2,42 +2,164 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>PE Sections (NSA) – Paste Text</title>
+<title>PE Sections (NSA) – IOT, VVM, 4G Mobility & ALL CR BP (Paste Text)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; color: #222; }
-  h1 { font-size: 18px; margin-bottom: 10px; }
-  h2 { font-size: 16px; margin-top: 24px; margin-bottom: 8px; }
-  .controls { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-  textarea { width: 100%; height: 200px; font-family: Consolas, monospace; font-size: 12px; padding: 8px; }
-  .hint { color: #666; font-size: 12px; margin-top: 6px; }
-  .card { border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 12px; }
-  ul { margin: 8px 0 16px 20px; line-height: 1.5; }
-  li { margin-bottom: 8px; }
-  .none { color: #888; font-style: italic; }
-  .pill { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 6px; border: 1px solid #ddd; background: #f7f7f7; }
-  .error { color: #a40000; background: #ffe5e5; padding: 8px; border: 1px solid #ffb3b3; border-radius: 4px; margin: 8px 0; }
-  button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #f8f8f8; cursor: pointer; }
-  button:hover { background: #f0f0f0; }
-  .row { margin-top: 6px; }
+<style>
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    margin: 32px;
+    color: #202124;
+    background: #f5f7fa;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: #2a388f;
+    letter-spacing: 0.5px;
+  }
+  h2 {
+    font-size: 18px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    color: #283593;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 16px 0 8px;
+    font-weight: 500;
+    color: #1565c0;
+  }
+  .controls {
+    margin: 18px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  textarea {
+    width: 100%;
+    height: 220px;
+    font-family: 'Consolas', 'Source Code Pro', monospace;
+    font-size: 13px;
+    padding: 12px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 8px #e3e6f0;
+    resize: vertical;
+    margin-top: 8px;
+  }
+  .hint {
+    color: #5d6470;
+    font-size: 13px;
+    margin: 8px 0 14px;
+    background: #e9f0fa;
+    border-left: 4px solid #90caf9;
+    padding: 9px 14px;
+    border-radius: 6px;
+  }
+  .card {
+    border: 1px solid #e0e3e8;
+    padding: 16px;
+    border-radius: 9px;
+    margin-top: 18px;
+    background: #fff;
+    box-shadow: 0 2px 10px #e3e6f0;
+  }
+  .subCard {
+    border: 1px dashed #bdbdbd;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+    background: #fafbfd;
+  }
+  .subHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  ul {
+    margin: 10px 0 16px 22px;
+    line-height: 1.7;
+  }
+  li {
+    margin-bottom: 9px;
+    font-size: 13px;
+    color: #333;
+  }
+  .none {
+    color: #9e9e9e;
+    font-style: italic;
+    font-size: 13px;
+  }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 13px;
+    font-size: 12px;
+    margin-right: 8px;
+    border: 1px solid #90caf9;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .error {
+    color: #ba1b1b;
+    background: #fff0f0;
+    padding: 10px;
+    border: 1px solid #ffbdbd;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  button {
+    padding: 8px 16px;
+    border: 1px solid #90caf9;
+    border-radius: 6px;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.18s, box-shadow 0.18s;
+    box-shadow: 0 1px 2px #e1eafc;
+  }
+  button:hover {
+    background: #bbdefb;
+    box-shadow: 0 1px 6px #90caf9;
+    border-color: #1565c0;
+  }
+  code {
+    background: #e3f2fd;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1565c0;
+    font-size: 12px;
+  }
+</style>
 </style>
 </head>
 <body>
-  <h1>PE Sections (NSA) – IOT & VVM (Paste Text)</h1>
+  <h1>PE Sections (NSA) – IOT, VVM, 4G Mobility & ALL CR BP (Paste Text)</h1>
 
   <div class="hint">
-    Paste your data from Excel or CSV here. The <b>first row must be headers</b>.<br/>
-    Expected headers: <code>Domain</code>, <code>RIL Circle</code>, <code>Brief Description</code>, and an NSA column
-    (<code>RAN Mode</code> / <code>Mode</code> / <code>RIL Service Affecting</code> / <code>Q</code>).
+    Paste your data from Excel/CSV. The <b>first row must be headers</b>.<br/>
+    Required headers for all logic (case-insensitive accepted):<br/>
+    <code>Domain</code>, <code>RIL Circle</code>, <code>Brief Description</code>, <code>Reason / Type of PE</code>, <code>Activity Node</code>, and an NSA column (any one of <code>RAN Mode</code> / <code>Mode</code> / <code>RIL Service Affecting</code> / <code>Q</code>).
   </div>
-<button onclick="window.open('5G%20CR%20BP.html','_blank')">Open 5G CR BP</button>
 
   <textarea id="txt" placeholder="Example:
-Domain\tRIL Circle\tBrief Description\tQ
-IOT Core\tMH\tSome IOT activity\tNSA
-IMS\tGJ\tIMS pe description\tNSA
-Transport\tMH\tNon-matching row\tSA
-BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
+Domain\tRIL Circle\tBrief Description\tReason / Type of PE\tActivity Node\tRAN Mode
+IOT Core\tMH\tSome IOT activity\tSW Upgrade\tAMF\tNSA
+IMS\tGJ\tIMS PE description\tGo-Live\tSMF\tNSA
+4G signalling\tDL\tPCRF tuning\tConfiguration\tUPF\tNSA
+4G_Access_DPI\tMH\tPM window\tPM\tUPF\tNSA
+WIFI_ENT_Core_Voice\tGJ\tHW replacement\tFault Rectification\tUPF\tNSA
+Transport\tMH\tNon-matching row\tSA\tMME\tSA"></textarea>
 
   <div class="controls">
     <button id="parseBtn">Parse</button>
@@ -45,10 +167,14 @@ BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
     <button id="copyIOT">Copy IOT bullets</button>
     <button id="copyVVM">Copy VVM bullets</button>
     <button id="copyCRBP">Copy ALL CR BP bullets</button>
-  </div>
+    
+	<button type="button" onclick="window.open('5G CR BP.html','_blank')">
+ 	 Open 5G CR BP
+	</button>
+</div>
 
   <div id="msg"></div>
-  <div id="summary" class="row"></div>
+  <div id="summary" class="pill"></div>
 
   <div class="card">
     <h2>IOT Domain Core PEs (NSA): -</h2>
@@ -60,33 +186,73 @@ BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
     <ul id="vvmList"></ul>
   </div>
 
+  <!-- NEW: 4G Mobility Core PEs (NSA) -->
+  <div class="card">
+    <h2>4G Mobility Core PEs: - (NSA)</h2>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Upgrades Activities:</h3>
+        <span id="count4GUpg" class="pill"></span>
+        <button id="copy4GUpg">Copy</button>
+      </div>
+      <ul id="list4GUpg"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Go live Activities:</h3>
+        <span id="count4GGo" class="pill"></span>
+        <button id="copy4GGo">Copy</button>
+      </div>
+      <ul id="list4GGo"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Configuration/ InfoSec Activities: -</h3>
+        <span id="count4GConf" class="pill"></span>
+        <button id="copy4GConf">Copy</button>
+      </div>
+      <ul id="list4GConf"></ul>
+    </div>
+
+    <div class="subCard">
+      <div class="subHead">
+        <h3 style="margin:0;">Troubleshooting/ HW Activities:-</h3>
+        <span id="count4GTrouble" class="pill"></span>
+        <button id="copy4GTrouble">Copy</button>
+      </div>
+      <ul id="list4GTrouble"></ul>
+    </div>
+  </div>
+
   <div class="card">
     <h2>ALL CR BP</h2>
     <ul id="crbpList"></ul>
   </div>
 
 <script>
-  // ===== Configuration =====
-  // Header aliases (case-insensitive matches supported)
-  const HDR_DOMAIN = ['Domain'];                                // D column (by name)
-  const HDR_CIRCLE = ['RIL Circle', 'Circle', 'RILCircle'];     // I column (by name)
-  const HDR_DESC   = ['Brief Description', 'Description', 'Brief_Description']; // N column (by name)
+  // ===== Config / Aliases =====
+  const HDR_DOMAIN  = ['Domain'];                                        // D
+  const HDR_CIRCLE  = ['RIL Circle', 'Circle', 'RILCircle'];             // E
+  const HDR_DESC    = ['Brief Description', 'Description', 'Brief_Description']; // G
+  const HDR_REASON  = ['Reason / Type of PE', 'Reason', 'Type of PE', 'Reason/Type of PE']; // C
+  const HDR_NODE    = ['Activity Node', 'Node', 'ActivityNode'];         // F
 
-  // NSA column candidates (Q or other). To restrict ONLY to Q: const NSA_COLUMNS = ['Q'];
+  // NSA column candidates (first match is used)
   const NSA_COLUMNS = ['RAN Mode', 'Mode', 'RIL Service Affecting', 'Q', 'Service Mode', 'SA/NSA', 'RANMode'];
 
-  // Domain tokens
-  const TOK_IOT = ['IOT Core'];
+  // Domain tokens (IOT/VVM)
+  const TOK_IOT = ['IOT Core', 'IP IOT', 'iot'];
   const TOK_VVM = ['BREAKOUT', 'IMS', 'SMS'];
 
-  // --- ALL CR BP behavior ---
-  // By default, we include ALL rows (no filter).
-  // If you want only rows where certain columns contain tokens, set:
-  //   const CRBP_TOKENS = ['CR','BP'];  // example tokens
-  //   const CRBP_FILTER_COLUMNS = ['Category', 'Reason / Type of PE']; // columns to scan
-  // Default: include everything (no tokens)
-  const CRBP_TOKENS = []; // [] or null => no filtering (include all rows)
-  const CRBP_FILTER_COLUMNS = ['Category', 'Reason / Type of PE']; // used only if CRBP_TOKENS has values
+  // 4G Mobility: Domain tokens
+  const TOK_4G = ['4g signalling', '4g_access_dpi', 'wifi_ent_core_voice'];
+
+  // ALL CR BP filter tokens (optional). Leave [] to include ALL rows.
+  const CRBP_TOKENS = []; // e.g., ['CR', 'BP'] if you want filtering
+  const CRBP_FILTER_COLUMNS = ['Category', 'Reason / Type of PE']; // only used when CRBP_TOKENS has values
 
   // ===== Helpers =====
   const norm = v => (v ?? '').toString().trim();
@@ -116,7 +282,7 @@ BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
     return '';
   }
 
-  function getNSAValue(rowObj) {
+  function getNSA(rowObj) {
     for (const c of NSA_COLUMNS) {
       if (rowObj.hasOwnProperty(c)) return norm(rowObj[c]);
       const matchKey = Object.keys(rowObj).find(k => toLower(k) === toLower(c));
@@ -130,55 +296,58 @@ BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
     return tokens.some(tok => s.includes(tok.toLowerCase()));
   }
 
-  function bulletText(circle, tag, desc) {
-    const c = norm(circle);
-    const t = norm(tag);
-    const d = norm(desc);
-    return `${c}${c && (t || d) ? ', ' : ''}${t}${(t && d) ? ', ' : (!t && c && d) ? ', ' : ''}${d}`;
+  // Robust SMF-BNG variant check
+  function isSMFBNG(node) {
+    const s = toLower(node);
+    if (!s) return false;
+    if (s.includes('smf-bng')) return true;
+    if (s.includes('smf bng')) return true;
+    if (s.includes('smf,smf bng')) return true;
+    if (/smf[^a-z0-9]+bng/.test(s)) return true; // e.g., "SMF / BNG", "SMF_BNG", "SMF - BNG"
+    return false;
   }
 
-  function showError(html) {
-    const msg = document.getElementById('msg');
-    msg.innerHTML = `<div class="error">${html}</div>`;
-  }
-
-  function clearError() {
-    document.getElementById('msg').innerHTML = '';
-  }
+  // Bullets
+  function bulletIOT(circle, desc) { return `${norm(circle)}${circle && desc ? ', ' : ''}HSI${desc ? ', ' : ''}${norm(desc)}`; }
+  function bulletVVM(circle, desc) { return `${norm(circle)}${circle && desc ? ', ' : ''}VVM${desc ? ', ' : ''}${norm(desc)}`; }
+  function bulletCRBP(circle, desc){ return `${norm(circle)}${circle && desc ? ', ' : ''}${norm(desc)}`; }
+  function bullet4G(circle, desc)  { return `${norm(circle)}${circle && desc ? ', ' : ''}${norm(desc)}`; } // 4G bullets: "RIL Circle, Brief Description"
 
   function renderUL(ul, items) {
     ul.innerHTML = '';
     if (!items.length) {
-      const li = document.createElement('li');
-      li.className = 'none';
-      li.textContent = 'None';
-      ul.appendChild(li);
+      const li = document.createElement('li'); li.className='none'; li.textContent='None'; ul.appendChild(li);
       return;
     }
-    items.forEach(t => {
-      const li = document.createElement('li');
-      li.textContent = t;
-      ul.appendChild(li);
-    });
+    items.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
   }
 
-  function copyBullets(ulId) {
-    const ul = document.getElementById(ulId);
-    const bullets = Array.from(ul.querySelectorAll('li'))
-      .map(li => li.textContent)
-      .filter(x => x && x !== 'None')
-      .join('\n');
-    if (!bullets) return;
-    navigator.clipboard.writeText(bullets);
+  function renderULwithNA(ul, pillId, items) {
+    ul.innerHTML = '';
+    document.getElementById(pillId).textContent = `Count: ${items.length}`;
+    if (!items.length) {
+      const li = document.createElement('li'); li.className='none'; li.textContent='NA'; ul.appendChild(li);
+      return;
+    }
+    items.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
   }
 
-  // ===== Main parse handler =====
+  function copyBullets(id) {
+    const items = Array.from(document.querySelectorAll(`#${id} li`))
+      .map(li => li.textContent).filter(x => x && x !== 'None' && x !== 'NA');
+    if (!items.length) return;
+    navigator.clipboard.writeText(items.join('\n'));
+  }
+
+  // ===== Parse & Render =====
   document.getElementById('parseBtn').addEventListener('click', () => {
-    clearError();
-    const text = document.getElementById('txt').value || '';
-    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    document.getElementById('msg').innerHTML = '';
+    document.getElementById('summary').innerHTML = '';
+
+    const raw = document.getElementById('txt').value || '';
+    const lines = raw.split(/\r?\n/).filter(l => l.trim().length > 0);
     if (lines.length < 2) {
-      showError('Please paste at least a header row and one data row.');
+      document.getElementById('msg').innerHTML = '<div class="error">Please paste at least a header row and one data row.</div>';
       return;
     }
 
@@ -195,81 +364,136 @@ BREAKOUT\tDL\tBreakout work details\tNSA"></textarea>
       rows.push(obj);
     }
 
-    // Validate essential headers exist
+    // Validate presence of essential headers
     const headersLower = headers.map(h => toLower(h));
     const missing = [];
     if (!headersLower.includes('domain')) missing.push('Domain');
     if (!headersLower.includes('ril circle') && !headersLower.includes('circle') && !headersLower.includes('rilcircle')) missing.push('RIL Circle');
     if (!headersLower.includes('brief description') && !headersLower.includes('description') && !headersLower.includes('brief_description')) missing.push('Brief Description');
+    if (!headersLower.includes('reason / type of pe') && !headersLower.includes('reason') && !headersLower.includes('type of pe') && !headersLower.includes('reason/type of pe')) missing.push('Reason / Type of PE');
+    if (!headersLower.includes('activity node') && !headersLower.includes('node') && !headersLower.includes('activitynode')) missing.push('Activity Node');
 
     const hasNSAHeader = NSA_COLUMNS.some(n => headersLower.includes(toLower(n)));
 
     if (missing.length) {
-      showError('Missing expected header(s): <b>' + missing.join(', ') + '</b>. Make sure your first row is headers.');
+      document.getElementById('msg').innerHTML = '<div class="error">Missing expected header(s): <b>' + missing.join(', ') + '</b>.</div>';
       return;
     }
     if (!hasNSAHeader) {
-      showError('Warning: No NSA column detected (looked for: ' + NSA_COLUMNS.join(', ') + '). Rows will not match NSA unless one of these columns exists and contains "NSA".');
+      document.getElementById('msg').innerHTML = '<div class="error">Warning: No NSA column detected (looked for: ' + NSA_COLUMNS.join(', ') + '). Rows will not match NSA unless one of these columns exists and contains "NSA".</div>';
     }
 
-    // Filter rows into sections
+    // Build sections
     const iotItems  = [];
     const vvmItems  = [];
     const crbpItems = [];
+
+    // 4G mobility sub-groups
+    const g4Upg = [];
+    const g4Go  = [];
+    const g4Conf= [];
+    const g4Trou= [];
 
     rows.forEach(r => {
       const domain = getCell(r, HDR_DOMAIN);
       const circle = getCell(r, HDR_CIRCLE);
       const desc   = getCell(r, HDR_DESC);
-      const nsa    = getNSAValue(r);
+      const reason = getCell(r, HDR_REASON);
+      const node   = getCell(r, HDR_NODE);
+      const nsa    = getNSA(r);
 
       const isNSA = toLower(nsa) === 'nsa';
 
-      // IOT: Domain contains 'IOT Core' AND NSA
+      // IOT
       if (isNSA && containsAny(domain, TOK_IOT)) {
-        iotItems.push(bulletText(circle, 'HSI', desc));
+        iotItems.push(bulletIOT(circle, desc));
       }
-
-      // VVM: Domain contains any of BREAKOUT/IMS/SMS AND NSA
+      // VVM
       if (isNSA && containsAny(domain, TOK_VVM)) {
-        vvmItems.push(bulletText(circle, 'VVM', desc));
+        vvmItems.push(bulletVVM(circle, desc));
       }
-
-      // ALL CR BP: by default include ALL rows -> "RIL Circle, Brief Description"
+      // ALL CR BP (include all rows by default)
       let includeCRBP = true;
       if (CRBP_TOKENS && CRBP_TOKENS.length) {
-        const hay = (CRBP_FILTER_COLUMNS || [])
-          .map(col => getCell(r, [col]))
-          .join(' ');
+        const hay = (CRBP_FILTER_COLUMNS || []).map(col => r[col] || r[Object.keys(r).find(k => toLower(k) === toLower(col))] || '').join(' ');
         includeCRBP = containsAny(hay, CRBP_TOKENS);
       }
       if (includeCRBP) {
-        crbpItems.push(bulletText(circle, '', desc)); // "Circle, Desc"
+        crbpItems.push(bulletCRBP(circle, desc));
+      }
+
+      // ===== 4G Mobility Core PEs: - (NSA) =====
+      if (isNSA) {
+        const reasonL = toLower(reason);
+        const domainL = toLower(domain);
+        const nodeVal = node || '';
+        const nodeL   = toLower(nodeVal);
+
+        const domainIs4G = containsAny(domainL, TOK_4G);
+        const isSMFBNGv  = isSMFBNG(nodeVal);
+
+        // 1) Upgrades: Reason contains SW Upgrade or FW Upgrade AND Domain in 4G set
+        if ((reasonL.includes('sw upgrade') || reasonL.includes('fw upgrade')) && domainIs4G) {
+          g4Upg.push(bullet4G(circle, desc));
+        }
+
+        // 2) Go-Live: Reason contains Go-Live (or Go live) AND Activity Node not contains SMF-BNG variants
+        if ((reasonL.includes('go-live') || reasonL.includes('go live')) && !isSMFBNGv) {
+          g4Go.push(bullet4G(circle, desc));
+        }
+
+        // 3) Configuration/InfoSec: Reason contains Configuration or INFOSEC AND Domain in 4G set
+        if ((reasonL.includes('configuration') || reasonL.includes('infosec')) && domainIs4G) {
+          g4Conf.push(bullet4G(circle, desc));
+        }
+
+        // 4) Troubleshooting/HW: Reason contains Fault Rectification or PM AND Domain in 4G set
+        if ((reasonL.includes('fault rectification') || reasonL.includes(' pm')) && domainIs4G) {
+          g4Trou.push(bullet4G(circle, desc));
+        }
       }
     });
 
+    // Render IOT/VVM/CRBP
     renderUL(document.getElementById('iotList'),  iotItems);
     renderUL(document.getElementById('vvmList'),  vvmItems);
     renderUL(document.getElementById('crbpList'), crbpItems);
 
+    // Render 4G Mobility (with NA + counts)
+    renderULwithNA(document.getElementById('list4GUpg'), 'count4GUpg', g4Upg);
+    renderULwithNA(document.getElementById('list4GGo'),  'count4GGo',  g4Go);
+    renderULwithNA(document.getElementById('list4GConf'),'count4GConf',g4Conf);
+    renderULwithNA(document.getElementById('list4GTrouble'),'count4GTrouble',g4Trou);
+
     document.getElementById('summary').innerHTML =
       `<span class="pill">IOT NSA: <b>${iotItems.length}</b></span>` +
       `<span class="pill">VVM NSA: <b>${vvmItems.length}</b></span>` +
+      `<span class="pill">4G Upg: <b>${g4Upg.length}</b></span>` +
+      `<span class="pill">4G Go: <b>${g4Go.length}</b></span>` +
+      `<span class="pill">4G Config: <b>${g4Conf.length}</b></span>` +
+      `<span class="pill">4G Trouble: <b>${g4Trou.length}</b></span>` +
       `<span class="pill">ALL CR BP: <b>${crbpItems.length}</b></span>`;
   });
 
   document.getElementById('clearBtn').addEventListener('click', () => {
     document.getElementById('txt').value = '';
-    document.getElementById('iotList').innerHTML = '';
-    document.getElementById('vvmList').innerHTML = '';
-    document.getElementById('crbpList').innerHTML = '';
-    document.getElementById('summary').innerHTML = '';
-    clearError();
+    ['iotList','vvmList','crbpList','msg','summary','list4GUpg','list4GGo','list4GConf','list4GTrouble',
+     'count4GUpg','count4GGo','count4GConf','count4GTrouble'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    });
   });
 
+  // Copy buttons
   document.getElementById('copyIOT').addEventListener('click', () => copyBullets('iotList'));
   document.getElementById('copyVVM').addEventListener('click', () => copyBullets('vvmList'));
   document.getElementById('copyCRBP').addEventListener('click', () => copyBullets('crbpList'));
+
+  // Copy for 4G sub-sections
+  document.getElementById('copy4GUpg').addEventListener('click', () => copyBullets('list4GUpg'));
+  document.getElementById('copy4GGo').addEventListener('click', () => copyBullets('list4GGo'));
+  document.getElementById('copy4GConf').addEventListener('click', () => copyBullets('list4GConf'));
+  document.getElementById('copy4GTrouble').addEventListener('click', () => copyBullets('list4GTrouble'));
 </script>
 </body>
 </html>
