@@ -5,27 +5,179 @@
 <title>5G CR BP</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; color: #222; }
-  h1 { font-size: 18px; margin-bottom: 10px; }
-  h2 { font-size: 16px; margin-top: 24px; margin-bottom: 8px; }
-  h3 { font-size: 14px; margin: 14px 0 6px; }
-  .controls { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  textarea { width: 100%; height: 240px; font-family: Consolas, monospace; font-size: 12px; padding: 8px; }
-  .hint { color: #666; font-size: 12px; margin-top: 6px; }
-  .error { color: #a40000; background: #ffe5e5; padding: 8px; border: 1px solid #ffb3b3; border-radius: 4px; margin: 8px 0; }
-  .card { border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 12px; }
-  ul { margin: 8px 0 16px 20px; line-height: 1.5; }
-  li { margin-bottom: 8px; }
-  .none { color: #888; font-style: italic; }
-  .pill { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 6px; border: 1px solid #ddd; background: #f7f7f7; }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
-  th, td { border: 1px solid #eee; padding: 6px 8px; text-align: left; vertical-align: top; }
-  th { background: #fafafa; }
-  button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #f8f8f8; cursor: pointer; }
-  button:hover { background: #f0f0f0; }
-  label { display: inline-flex; align-items: center; gap: 6px; }
-  .subCard { border: 1px dashed #ddd; padding: 8px; border-radius: 6px; margin-top: 8px; }
-  .subHead { display:flex; align-items:center; gap:8px; }
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    margin: 32px;
+    color: #202124;
+    background: #f5f7fa;
+  }
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #2a388f;
+    letter-spacing: 0.5px;
+  }
+  h2 {
+    font-size: 18px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    color: #283593;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 16px 0 8px;
+    font-weight: 500;
+    color: #1565c0;
+  }
+  .controls {
+    margin: 20px 0;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  textarea {
+    width: 100%;
+    height: 220px;
+    font-family: 'Consolas', 'Source Code Pro', monospace;
+    font-size: 13px;
+    padding: 12px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 8px #e3e6f0;
+    resize: vertical;
+    margin-top: 8px;
+    transition: box-shadow 0.2s, border 0.2s;
+  }
+  textarea:focus {
+    border-color: #90caf9;
+    box-shadow: 0 2px 16px #bbdefb;
+  }
+  .hint {
+    color: #5d6470;
+    font-size: 13px;
+    margin: 12px 0 18px;
+    background: #e9f0fa;
+    border-left: 4px solid #90caf9;
+    padding: 9px 16px;
+    border-radius: 6px;
+  }
+  .card {
+    border: 1px solid #e0e3e8;
+    padding: 20px 18px;
+    border-radius: 10px;
+    margin-top: 24px;
+    background: #fff;
+    box-shadow: 0 2px 10px #e3e6f0;
+  }
+  .subCard {
+    border: 1px dashed #bdbdbd;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-top: 18px;
+    background: #fafbfd;
+  }
+  .subHead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  ul {
+    margin: 10px 0 18px 26px;
+    line-height: 1.65;
+  }
+  li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+  }
+  .none {
+    color: #9e9e9e;
+    font-style: italic;
+    font-size: 13px;
+  }
+  .pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 15px;
+    font-size: 13px;
+    margin-right: 10px;
+    border: 1px solid #90caf9;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .error {
+    color: #ba1b1b;
+    background: #fff0f0;
+    padding: 12px 16px;
+    border: 1px solid #ffbdbd;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  button {
+    padding: 9px 18px;
+    border: 1px solid #90caf9;
+    border-radius: 7px;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.18s, box-shadow 0.18s, border 0.18s;
+    box-shadow: 0 1px 2px #e1eafc;
+  }
+  button:hover {
+    background: #bbdefb;
+    box-shadow: 0 1px 6px #90caf9;
+    border-color: #1565c0;
+  }
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    background: #f1f8ff;
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid #e3e6f0;
+    cursor: pointer;
+  }
+  code {
+    background: #e3f2fd;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: #1565c0;
+    font-size: 13px;
+  }
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 14px;
+    background: #f8fafc;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px #e3e6f0;
+  }
+  th, td {
+    border: 1px solid #e3e6f0;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #e3f2fd;
+    font-weight: 600;
+    color: #1565c0;
+  }
 </style>
 </head>
 <body>
@@ -37,13 +189,13 @@
   </div>
 
   <textarea id="txt" placeholder="Example:
-Sr No\tReason / Type of PE\tDomain\tPE Number\tRIL Circle\tActivity Node\tBrief Description\tRIL Service Affecting
-1\tSW Upgrade\t5G\tPE-5678\tGJ\tSMF\tSoftware upgrade window\tNSA
-2\tGo-Live\t5G\tPE-1234\tMH\tAMF\tCutover activity\tNSA
-3\tConfiguration\t5G\tPE-7890\tDL\tUPF\tPolicy configuration\tNSA
-4\tFault Rectification\t5G\tPE-1111\tMH\tUPF\tHW swap\tNSA
-5\tFault Rectification\t5G\tPE-2222\tGJ\tSMF-BNG\tAccess-side fix\tNSA
-6\tCR BP\t5G\tPE-3333\tMH\tSMF , SMF BNG\tGeneral item\tNSA"></textarea>
+Sr No\ Reason / Type of PE\ Domain\ PE Number\ RIL Circle\ Activity Node\ Brief Description\ RIL Service Affecting
+1\ SW Upgrade\ 5G\ PE-5678\ GJ\ SMF\ Software upgrade window\ NSA
+2\ Go-Live\ 5G\ PE-1234\ MH\ AMF\ Cutover activity\ NSA
+3\ Configuration\ 5G\ PE-7890\ DL\ UPF\ Policy configuration\ NSA
+4\ Fault Rectification\ 5G\ PE-1111\ MH\ UPF\ HW swap\ NSA
+5\ Fault Rectification\ 5G\ PE-2222\ GJ\ SMF-BNG\ Access-side fix\ NSA
+6\ CR BP\ 5G\ PE-3333\ MH\ SMF , SMF BNG\ General item\ NSA"></textarea>
 
   <div class="controls">
     <button id="parseBtn">Parse</button>
